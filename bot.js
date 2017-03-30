@@ -1,8 +1,8 @@
 /* Uses the slack button feature to offer a real time bot to multiple teams */
 const Botkit = require('botkit');
 
-if (!process.env.clientId || !process.env.clientSecret || !process.env.port) {
-  console.log('Error: Specify clientId clientSecret and port in environment');
+if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT) {
+  console.log('Error: Specify CLIENT_ID CLIENT_SECRET and port in environment');
   process.exit(1);
 }
 
@@ -12,8 +12,8 @@ var controller = Botkit.slackbot({
   // rtm_receive_messages: false, // disable rtm_receive_messages if you enable events api
 }).configureSlackApp(
   {
-    clientId: process.env.clientId,
-    clientSecret: process.env.clientSecret,
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
     redirectUri: process.env.redirectUri, // optional parameter passed to slackbutton oauth flow
     scopes: ['bot'],
   }
