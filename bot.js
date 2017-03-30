@@ -47,48 +47,12 @@ require("fs").readdirSync(normalizedPath).forEach(function(file) {
   require("./skills/" + file)(controller);
 });
 
-
-
-// This captures and evaluates any message sent to the bot as a DM
-// or sent to the bot in the form "@bot message" and passes it to
-// Botkit Studio to evaluate for trigger words and patterns.
-// If a trigger is matched, the conversation will automatically fire!
-// You can tie into the execution of the script using the functions
-// controller.studio.before, controller.studio.after and controller.studio.validate
-if (process.env.studio_token) {
-    controller.on('direct_message,direct_mention,mention', function(bot, message) {
-        controller.studio.runTrigger(bot, message.text, message.user, message.channel).then(function(convo) {
-            if (!convo) {
-                // no trigger was matched
-                // If you want your bot to respond to every message,
-                // define a 'fallback' script in Botkit Studio
-                // and uncomment the line below.
-                // controller.studio.run(bot, 'fallback', message.user, message.channel);
-            } else {
-                // set variables here that are needed for EVERY script
-                // use controller.studio.before('script') to set variables specific to a script
-                convo.setVar('current_time', new Date());
-            }
-        }).catch(function(err) {
-            bot.reply(message, 'I experienced an error with a request to Botkit Studio: ' + err);
-            debug('Botkit Studio: ', err);
-        });
-    });
-} else {
-    console.log('~~~~~~~~~~');
-    console.log('NOTE: Botkit Studio functionality has not been enabled');
-    console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/');
-}
-
-
-
-
 function usage_tip() {
     console.log('~~~~~~~~~~');
     console.log('Botkit Starter Kit');
     console.log('Execute your bot application like this:');
-    console.log('clientId=<MY SLACK CLIENT ID> clientSecret=<MY CLIENT SECRET> PORT=3000 studio_token=<MY BOTKIT STUDIO TOKEN> node bot.js');
+    console.log('Make sure to add your CLIENT_ID, CLIENT_SECRET, PORT, AND DASHBOT_KEY in the .env file');
     console.log('Get Slack app credentials here: https://api.slack.com/apps')
-    console.log('Get a Botkit Studio token here: https://studio.botkit.ai/')
+    console.log('Get a dashbot API key here: https://www.dashbot.io')
     console.log('~~~~~~~~~~');
 }
