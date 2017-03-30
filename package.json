@@ -1,0 +1,28 @@
+{
+  "name": "picklebot",
+  "version": "1.0.0",
+  "description": "A slack bot that manages your companies' pickleball games",
+  "main": "bot.js",
+  "scripts": {
+    "start" "node bot.js"
+    "test": "standard"
+  },
+  "dependencies": {
+    "botkit": "^0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hellojetpack/picklebot.git"
+  },
+  "keywords": [
+    "bots",
+    "chatbots",
+    "slack"
+  ],
+  "author": "hellojetpack",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hellojetpack/picklebot/issues"
+  },
+  "homepage": "https://github.com/hellojetpack/picklebot#readme"
+}
