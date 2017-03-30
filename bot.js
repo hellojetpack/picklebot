@@ -1,117 +1,94 @@
-/* Uses the slack button feature to offer a real time bot to multiple teams */
-const Botkit = require('botkit');
+const config = require('./config');
 
-if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT) {
-  console.log('Error: Specify CLIENT_ID CLIENT_SECRET and port in environment');
+if (!config('CLIENT_ID') || !config('CLIENT_SECRET') || !config('PORT')) {
+  console.log('Error: Specify clientId clientSecret and PORT in environment');
+  usage_tip();
   process.exit(1);
 }
 
+var Botkit = require('botkit');
+var debug = require('debug')('botkit:main');
 
+// Create the Botkit controller, which controls all instances of the bot.
 var controller = Botkit.slackbot({
-  json_file_store: './db_slackbutton_bot/',
-  // rtm_receive_messages: false, // disable rtm_receive_messages if you enable events api
-}).configureSlackApp(
-  {
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    redirectUri: process.env.redirectUri, // optional parameter passed to slackbutton oauth flow
+    clientId: config('CLIENT_ID'),
+    clientSecret: config('CLIENT_SECRET'),
+    // debug: true,
     scopes: ['bot'],
-  }
-);
+    json_file_store: __dirname + '/.db/' // store user data in a simple JSON format
+});
 
-controller.setupWebserver(process.env.port,function(err,webserver) {
-  controller.createWebhookEndpoints(controller.webserver);
+controller.startTicking();
 
-  controller.createOauthEndpoints(controller.webserver,function(err,req,res) {
-    if (err) {
-      res.status(500).send('ERROR: ' + err);
-    } else {
-      res.send('Success!');
-    }
-  });
+// Set up an Express-powered webserver to expose oauth and webhook endpoints
+var webserver = require(__dirname + '/components/express_webserver.js')(controller);
+
+// Set up a simple storage backend for keeping a record of customers
+// who sign up for the app via the oauth
+require(__dirname + '/components/user_registration.js')(controller);
+
+// Send an onboarding message when a new team joins
+require(__dirname + '/components/onboarding.js')(controller);
+
+// no longer necessary since slack now supports the always on event bots
+// // Set up a system to manage connections to Slack's RTM api
+// // This will eventually be removed when Slack fixes support for bot presence
+// var rtm_manager = require(__dirname + '/components/rtm_manager.js')(controller);
+//
+// // Reconnect all pre-registered bots
+// rtm_manager.reconnect();
+
+// Enable Dashbot.io plugin
+require(__dirname + '/components/plugin_dashbot.js')(controller);
+
+
+var normalizedPath = require("path").join(__dirname, "skills");
+require("fs").readdirSync(normalizedPath).forEach(function(file) {
+  require("./skills/" + file)(controller);
 });
 
 
-// just a simple way to make sure we don't
-// connect to the RTM twice for the same team
-var _bots = {};
-function trackBot(bot) {
-  _bots[bot.config.token] = bot;
+
+// This captures and evaluates any message sent to the bot as a DM
+// or sent to the bot in the form "@bot message" and passes it to
+// Botkit Studio to evaluate for trigger words and patterns.
+// If a trigger is matched, the conversation will automatically fire!
+// You can tie into the execution of the script using the functions
+// controller.studio.before, controller.studio.after and controller.studio.validate
+if (process.env.studio_token) {
+    controller.on('direct_message,direct_mention,mention', function(bot, message) {
+        controller.studio.runTrigger(bot, message.text, message.user, message.channel).then(function(convo) {
+            if (!convo) {
+                // no trigger was matched
+                // If you want your bot to respond to every message,
+                // define a 'fallback' script in Botkit Studio
+                // and uncomment the line below.
+                // controller.studio.run(bot, 'fallback', message.user, message.channel);
+            } else {
+                // set variables here that are needed for EVERY script
+                // use controller.studio.before('script') to set variables specific to a script
+                convo.setVar('current_time', new Date());
+            }
+        }).catch(function(err) {
+            bot.reply(message, 'I experienced an error with a request to Botkit Studio: ' + err);
+            debug('Botkit Studio: ', err);
+        });
+    });
+} else {
+    console.log('~~~~~~~~~~');
+    console.log('NOTE: Botkit Studio functionality has not been enabled');
+    console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/');
 }
 
-controller.on('create_bot',function(bot,config) {
-
-  if (_bots[bot.config.token]) {
-    // already online! do nothing.
-  } else {
-    bot.startRTM(function(err) {
-
-      if (!err) {
-        trackBot(bot);
-      }
-
-      bot.startPrivateConversation({user: config.createdBy},function(err,convo) {
-        if (err) {
-          console.log(err);
-        } else {
-          convo.say('I am a bot that has just joined your team');
-          convo.say('You must now /invite me to a channel so that I can be of use!');
-        }
-      });
-
-    });
-  }
-
-});
 
 
-// Handle events related to the websocket connection to Slack
-controller.on('rtm_open',function(bot) {
-  console.log('** The RTM api just connected!');
-});
 
-controller.on('rtm_close',function(bot) {
-  console.log('** The RTM api just closed');
-  // you may want to attempt to re-open
-});
-
-controller.hears('hello','direct_message',function(bot,message) {
-  bot.reply(message,'Hello!');
-});
-
-controller.hears('^stop','direct_message',function(bot,message) {
-  bot.reply(message,'Goodbye');
-  bot.rtm.close();
-});
-
-controller.on(['direct_message','mention','direct_mention'],function(bot,message) {
-  bot.api.reactions.add({
-    timestamp: message.ts,
-    channel: message.channel,
-    name: 'robot_face',
-  },function(err) {
-    if (err) { console.log(err) }
-    bot.reply(message,'I heard you loud and clear boss.');
-  });
-});
-
-controller.storage.teams.all(function(err,teams) {
-
-  if (err) {
-    throw new Error(err);
-  }
-
-  // connect all teams with bots up to slack!
-  for (var t  in teams) {
-    if (teams[t].bot) {
-      controller.spawn(teams[t]).startRTM(function(err, bot) {
-        if (err) {
-          console.log('Error connecting bot to Slack:',err);
-        } else {
-          trackBot(bot);
-        }
-      });
-    }
-  }
-
-});
+function usage_tip() {
+    console.log('~~~~~~~~~~');
+    console.log('Botkit Starter Kit');
+    console.log('Execute your bot application like this:');
+    console.log('clientId=<MY SLACK CLIENT ID> clientSecret=<MY CLIENT SECRET> PORT=3000 studio_token=<MY BOTKIT STUDIO TOKEN> node bot.js');
+    console.log('Get Slack app credentials here: https://api.slack.com/apps')
+    console.log('Get a Botkit Studio token here: https://studio.botkit.ai/')
+    console.log('~~~~~~~~~~');
+}
