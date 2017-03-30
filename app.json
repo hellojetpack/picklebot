@@ -1,0 +1,16 @@
+
+{
+  "name": "Picklebot",
+  "description": "A slackbot that manages your companies' pickleball games",
+  "repository": "git+https://github.com/hellojetpack/picklebot.git",
+  "keywords": ["node", "bots", "slack","botkit"],
+  "success_url":"/",
+  "env": {
+      "CLIENT_ID": {
+          "description": "Client ID provided by Slack"
+      },
+      "CLIENT_SECRET": {
+          "description": "Client Secret provided by Slack"
+      },
+  }
+}
