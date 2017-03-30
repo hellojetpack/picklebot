@@ -4,7 +4,7 @@
   "description": "A slack bot that manages your companies' pickleball games",
   "main": "bot.js",
   "scripts": {
-    "start" "node bot.js"
+    "start": "node bot.js",
     "test": "standard"
   },
   "dependencies": {
