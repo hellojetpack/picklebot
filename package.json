@@ -1,6 +1,6 @@
 {
   "name": "picklebot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A slack bot that manages your companies' pickleball games",
   "main": "bot.js",
   "scripts": {
@@ -32,5 +32,8 @@
   "bugs": {
     "url": "https://github.com/hellojetpack/picklebot/issues"
   },
-  "homepage": "https://github.com/hellojetpack/picklebot#readme"
+  "homepage": "https://github.com/hellojetpack/picklebot#readme",
+  "devDependencies": {
+    "localtunnel": "^1.8.2"
+  }
 }
