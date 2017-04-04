@@ -1,3 +1,5 @@
 language: node_js
 node_js:
   - "stable"
+notifications:
+  slack: hellojetpackteam:6IMdivZiP6Xdi8ByxS35BmH8
