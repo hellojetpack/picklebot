@@ -10,6 +10,8 @@ const config = {
   CLIENT_ID: process.env.CLIENT_ID,
   CLIENT_SECRET: process.env.CLIENT_SECRET,
   DASHBOT_KEY: process.env.DASHBOT_KEY,
+  LOCALTUNNEL_SUBDOMAIN: process.env.LOCALTUNNEL_SUBDOMAIN
+}
   MONGO_URI: process.env.MONGO_URI,
 };
 
