@@ -1,7 +1,8 @@
 console.log('loaded localtunnel.js');
 const localtunnel = require('localtunnel');
+const config = require('./config');
 const opts = {
-    subdomain: 'hellojetpack0'
+    subdomain: config('LOCALTUNNEL_SUBDOMAIN')
 };
 const tunnel = localtunnel(3000,opts, function(err, tunnel) {
     if (err) {

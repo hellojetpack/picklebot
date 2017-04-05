@@ -9,7 +9,8 @@ const config = {
   PORT: process.env.PORT,
   CLIENT_ID: process.env.CLIENT_ID,
   CLIENT_SECRET: process.env.CLIENT_SECRET,
-  DASHBOT_KEY: process.env.DASHBOT_KEY
+  DASHBOT_KEY: process.env.DASHBOT_KEY,
+  LOCALTUNNEL_SUBDOMAIN: process.env.LOCALTUNNEL_SUBDOMAIN
 }
 
 module.exports = (key) => (!key ? config : config[key]);
