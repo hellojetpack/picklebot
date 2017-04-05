@@ -17,6 +17,7 @@ if (!config('CLIENT_ID') || !config('CLIENT_SECRET') || !config('PORT')) {
 }
 
 const Botkit = require('botkit');
+const mongoStorage = require('botkit-storage-mongo')({ mongoUri: config('MONGO_URI') });
 const debug = require('debug')('botkit:main');
 
 // Create the Botkit controller, which controls all instances of the bot.
@@ -27,7 +28,7 @@ const controller = Botkit.slackbot({
   rtm_receive_messages: false,
     // debug: true,
   scopes: ['bot'],
-  json_file_store: `${__dirname}/.db/`, // store user data in a simple JSON format
+  storage: mongoStorage, // store user data in a simple JSON format
 });
 
 controller.startTicking();
