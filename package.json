@@ -5,7 +5,8 @@
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
-    "test": "eslint bot.js"
+    "test": "eslint bot.js",
+    "lt": "node bot-with-tunnel.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
