@@ -1,4 +1,3 @@
-console.log('loaded bot.js');
 const config = require('./config');
 
 const usageTip = () => {
