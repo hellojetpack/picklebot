@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 
 const ENV = process.env.NODE_ENV || 'development';
 
-if(ENV === 'development') dotenv.load();
+if (ENV === 'development') dotenv.load();
 
 const config = {
   ENV: process.env.NODE_ENV,
@@ -12,5 +12,7 @@ const config = {
   DASHBOT_KEY: process.env.DASHBOT_KEY,
   LOCALTUNNEL_SUBDOMAIN: process.env.LOCALTUNNEL_SUBDOMAIN
 }
+  MONGO_URI: process.env.MONGO_URI,
+};
 
-module.exports = (key) => (!key ? config : config[key]);
+module.exports = key => (!key ? config : config[key]);
