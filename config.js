@@ -11,7 +11,7 @@ const config = {
   CLIENT_SECRET: process.env.CLIENT_SECRET,
   DASHBOT_KEY: process.env.DASHBOT_KEY,
   LOCALTUNNEL_SUBDOMAIN: process.env.LOCALTUNNEL_SUBDOMAIN,
-  MONGO_URI: process.env.MONGO_URI,
+  MONGODB_URI: process.env.MONGODB_URI,
 };
 
 module.exports = key => (!key ? config : config[key]);
