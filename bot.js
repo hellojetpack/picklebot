@@ -17,7 +17,7 @@ if (!config('CLIENT_ID') || !config('CLIENT_SECRET') || !config('PORT')) {
 }
 
 const Botkit = require('botkit');
-const mongoStorage = require('botkit-storage-mongo')({ mongoUri: config('MONGO_URI') });
+const mongoStorage = require('botkit-storage-mongo')({ mongoUri: config('MONGODB_URI') });
 const debug = require('debug')('botkit:main');
 
 // Create the Botkit controller, which controls all instances of the bot.
