@@ -15,15 +15,20 @@ module.exports = function(controller) {
             }
 
             var new_team = false;
-            if (!team) {
-                team = {
-                    id: payload.identity.team_id,
-                    createdBy: payload.identity.user_id,
-                    url: payload.identity.url,
-                    name: payload.identity.team,
-                };
-                var new_team= true;
-            }
+          if (!team) {
+            team = {
+              id: payload.identity.team_id,
+              createdBy: payload.identity.user_id,
+              url: payload.identity.url,
+              name: payload.identity.team,
+              gameData: {
+                avgTime: 25,
+                gamesPlayed: 0,
+                gameMinutes: 0,
+              },
+            };
+            var new_team = true;
+          }
 
             team.bot = {
                 token: payload.bot.bot_access_token,
