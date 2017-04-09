@@ -5,30 +5,30 @@ module.exports = () => {
 
   // Update and returns the new team game count or
   // returns an error if unsuccessful
-  const addTeamGame = (controller, teamID, callback) => {
+  const addGame = (controller, zone, teamID, callback) => {
     let gamesPlayed = false;
     let returnError = false;
 
     // check to see if the game count exsits in the database
-    controller.storage.teams.get(teamID, (err, data) => {
-      const teamData = data;
+    controller.storage.zone.get(teamID, (err, data) => {
+      const zoneData = data;
 
       if (err) {
         returnError = `Could not access my storage because of an error: ${err}`;
       } else {
-        if (!teamData || !teamData.gameData || !teamData.gameData.gamesPlayed) {
+        if (!zoneData || !zoneData.gameData || !zoneData.gameData.gamesPlayed) {
           returnError = 'Something is wrong with your data';
         }
 
         // update games played by one
-        teamData.gameData.gamesPlayed += 1;
+        zoneData.gameData.gamesPlayed += 1;
 
         // save the team data back to the database and sets gamesPlayed
-        controller.storage.teams.save(teamData, (saveErr, saved) => {
+        controller.storage.zone.save(zoneData, (saveErr, saved) => {
           if (saveErr) {
             returnError = `I experienced an error adding your task: ${saveErr}`;
           } else {
-            gamesPlayed = teamData.gameData.gamesPlayed;
+            gamesPlayed = zoneData.gameData.gamesPlayed;
           }
         });
       }
@@ -39,6 +39,6 @@ module.exports = () => {
   // return methods
   return {
     returnAvgGameTime,
-    addTeamGame,
+    addGame,
   };
 };
