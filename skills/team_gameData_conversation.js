@@ -1,6 +1,6 @@
 module.exports = (controller) => {
   // listens to when users want the avg game time so we can send them the avg game time
-  controller.hears(['^what .* avg|average game time'], ['direct_message', 'direct_mention'], (bot, message) => {
+  controller.hears(['(avg|average) game time'], ['direct_message', 'direct_mention'], (bot, message) => {
     // get the teams data collection that matches the team id sent with the message
     controller.storage.teams.get(message.team, (err, teamData) => {
       if (err) {
