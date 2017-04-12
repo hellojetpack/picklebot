@@ -17,7 +17,6 @@ module.exports = (controller) => {
           mrkdwn_in: ['text'],
         },
       ],
-    },
-    );
+    });
   });
 };
