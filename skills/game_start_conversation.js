@@ -2,7 +2,7 @@
 
 module.exports = (controller) => {
 
-  controller.hears( ['next'], 'direct_message, direct_mention, mention', (bot, message) => {
+  controller.hears( ['next'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
 
     controller.storage.teams.get( message.team, (err, teamData) => {
 
