@@ -1,19 +1,25 @@
 
 module.exports = (controller) => {
+  controller.hears(['(game)? (order|list)'], ['direct_mention', 'mention', 'ambient'], (bot, message) => {
+    bot.startConversation(message, (convoErr, convo) => {
+      if (convoErr) throw Error;
 
-  controller.hears(['order','games','list'], 'direct_mention, mention, ambient', (bot, message) => {
-
-    controller.storage.channels.get( message.channel, (err, channelData) => {
-
-      if ( !channelData || !channelData.gameOrder || channelData.gameOrder.length === 0 ) {
-        bot.reply(message, 'Hello, There are curently no games scheduled. Say next or next `time` to get you in the queue!');
-      } else {
-
-        const text = `Here is the current game order:\n${generateGameOrder(channelData.gameOrder)}`;
-        bot.reply( message, text);
-      }
+      controller.storage.teams.get(message.team, (err, teamData) => {
+        if (err) {
+          convo.say({
+            text: `Uhhh, I experienced and error trying to access my sata files: ${err}`,
+            action: 'stop',
+          });
+        }
+        if (!teamData || !teamData.gameData ||
+            !teamData.gameData.gameOrder || !teamData.gameOrder.length === 0) {
+          convo.say({
+            text: 'Good news, looks like the pickleball court is wide open!',
+            action: 'stop',
+          });
+        }
+        convo.say('hello');
+      });
     });
   });
-
-  const generateGameOrder = (arr) => arr.reduce( ( acc, curr, index ) => acc.concat(`${index + 1}) ${curr}\n`), "");
-}
+};
