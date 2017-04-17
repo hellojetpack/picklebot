@@ -37,7 +37,8 @@ const formatMessage = (arr) => {
   attachments.push({ text: '',
     footer: 'Type "@pickleball next" to get on the list!',
     footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png',
-    color: '' });
+    color: 'fff' });
+  attachments.unshift({ color: 'fff', fields: [{ title: 'Player', short: true }, { title: 'Game Time', short: true }] });
 
   gameOrderMessage.text = ':point_down: Here is the current game list:';
   gameOrderMessage.attachments = attachments;

@@ -1,25 +1,34 @@
+const scripts = require('../scripts/add_to_game_list');
+const messageFormat = require('../components/message_formating.js');
 
 module.exports = (controller) => {
-  controller.hears(['(game)? (order|list)'], ['direct_mention', 'mention', 'ambient'], (bot, message) => {
-    bot.startConversation(message, (convoErr, convo) => {
-      if (convoErr) throw Error;
-
-      controller.storage.teams.get(message.team, (err, teamData) => {
-        if (err) {
-          convo.say({
-            text: `Uhhh, I experienced and error trying to access my sata files: ${err}`,
-            action: 'stop',
-          });
-        }
-        if (!teamData || !teamData.gameData ||
-            !teamData.gameData.gameOrder || !teamData.gameOrder.length === 0) {
-          convo.say({
-            text: 'Good news, looks like the pickleball court is wide open!',
-            action: 'stop',
-          });
-        }
-        convo.say('hello');
-      });
+  controller.hears(['(game)? (order|list)', 'games'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+    controller.storage.teams.get(message.team, (err, data) => {
+      if (err) {
+        bot.reply(message, `err... I'm having trouble accesing my data stores because of: ${err}`);
+      } else if (!data || !data.gameOrder || data.gameOrder.length === 0) {
+        bot.startConversationInThread(message, (convErr, convo) => {
+          convo.say('Great News: the pickleball court is wide open!');
+          convo.ask('Would you like me to set up a game for you?', [
+            {
+              pattern: bot.utterances.yes,
+              callback: (response, rConvo) => {
+                scripts.startAddToGameList(rConvo);
+                rConvo.next();
+              },
+            },
+            {
+              pattern: bot.utterances.no,
+              callback: (response, rConvo) => {
+                rConvo.say('All good! just type `@picklebot next` when you\'re ready');
+                rConvo.next();
+              },
+            },
+          ]);
+        });
+      } else {
+        bot.reply(message, messageFormat.formatMessage(data.gameOrder));
+      }
     });
   });
 };

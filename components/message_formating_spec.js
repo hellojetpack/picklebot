@@ -40,6 +40,10 @@ test('format message', (assert) => {
       text: ':point_down: Here is the current game list:',
       attachments: [
         {
+          color: 'fff',
+          fields: [{ title: 'Player', short: true }, { title: 'Game Time', short: true }],
+        },
+        {
           color: '0BE1A2',
           fields: [{ value: 'john', short: true }, { value: '10am', short: true }],
         },
@@ -53,7 +57,7 @@ test('format message', (assert) => {
           text: '',
           footer: 'Type "@pickleball next" to get on the list!',
           footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png',
-          color: '',
+          color: 'fff',
         },
       ],
     };
