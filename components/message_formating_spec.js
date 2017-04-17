@@ -6,9 +6,9 @@ const messageFormat = require('./message_formating.js');
 test('format attachment', (assert) => {
   {
     const msg = 'formatAttachment() should take an object and format it into a slack attachment. Scheduled time is false should return value for time key';
-    const obj = { createdBy: 'john', gameTime: '10am', scheduled: false };
+    const gameSlot = { createdBy: 'john', gameTime: '10am', scheduled: false };
 
-    const actual = messageFormat.formatAttachment(obj);
+    const actual = messageFormat.formatAttachment(gameSlot);
     const expected = { color: '', fields: [{ value: 'john', short: true }, { value: '10am', short: true }] };
 
     assert.same(actual, expected, msg);
@@ -16,9 +16,9 @@ test('format attachment', (assert) => {
 
   {
     const msg = 'formatAttachment() should take an object and format it into a slack attachment. Scheduled time is true should return "title" for time key';
-    const obj = { createdBy: 'john', gameTime: '10am', scheduled: true };
+    const gameSlotSchedTime = { createdBy: 'john', gameTime: '10am', scheduled: true };
 
-    const actual = messageFormat.formatAttachment(obj);
+    const actual = messageFormat.formatAttachment(gameSlotSchedTime);
     const expected = { color: '', fields: [{ value: 'john', short: true }, { title: '10am', short: true }] };
 
     assert.same(actual, expected, msg);
