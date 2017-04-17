@@ -1,19 +1,34 @@
+const scripts = require('../scripts/add_to_game_list');
+const messageFormat = require('../components/message_formating.js');
 
 module.exports = (controller) => {
-
-  controller.hears(['order','games','list'], 'direct_mention, mention, ambient', (bot, message) => {
-
-    controller.storage.channels.get( message.channel, (err, channelData) => {
-
-      if ( !channelData || !channelData.gameOrder || channelData.gameOrder.length === 0 ) {
-        bot.reply(message, 'Hello, There are curently no games scheduled. Say next or next `time` to get you in the queue!');
+  controller.hears(['(game)? (order|list)', 'games'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+    controller.storage.teams.get(message.team, (err, data) => {
+      if (err) {
+        bot.reply(message, `err... I'm having trouble accesing my data stores because of: ${err}`);
+      } else if (!data || !data.gameOrder || data.gameOrder.length === 0) {
+        bot.startConversationInThread(message, (convErr, convo) => {
+          convo.say('Great News: the pickleball court is wide open!');
+          convo.ask('Would you like me to set up a game for you?', [
+            {
+              pattern: bot.utterances.yes,
+              callback: (response, rConvo) => {
+                scripts.startAddToGameList(rConvo);
+                rConvo.next();
+              },
+            },
+            {
+              pattern: bot.utterances.no,
+              callback: (response, rConvo) => {
+                rConvo.say('All good! just type `@picklebot next` when you\'re ready');
+                rConvo.next();
+              },
+            },
+          ]);
+        });
       } else {
-
-        const text = `Here is the current game order:\n${generateGameOrder(channelData.gameOrder)}`;
-        bot.reply( message, text);
+        bot.reply(message, messageFormat.formatMessage(data.gameOrder));
       }
     });
   });
-
-  const generateGameOrder = (arr) => arr.reduce( ( acc, curr, index ) => acc.concat(`${index + 1}) ${curr}\n`), "");
-}
+};
