@@ -1,5 +1,6 @@
 const listMethods = require('../components/game_order_methods');
 const messageFormat = require('../components/message_formating');
+const reactions = require('../components/reactions');
 
 
 module.exports = (controller) => {
@@ -36,11 +37,7 @@ module.exports = (controller) => {
         if (saveErr) {
           bot.reply(message, `Could not save to my db at this time because ${saveErr}`);
         } else {
-          bot.api.reactions.add({
-            name: 'thumbsup',
-            channel: message.channel,
-            timestamp: message.ts,
-          });
+          bot.api.reactions.add(reactions.thumbsup(message));
           bot.startConversation(message, (conErr, convo) => {
             convo.say('Skip successful');
             convo.say(messageFormat.formatMessage(saved.gameOrder));
