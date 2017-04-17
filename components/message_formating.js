@@ -29,7 +29,7 @@ const formatAttachment = (obj) => {
   const fields = [{ value: obj.createdBy, short: true }];
   const timeField = {};
   const boldOrNo = obj.scheduled ? 'title' : 'value'; // bold scheduled times
-  timeField[boldOrNo] = obj.gameTime;
+  timeField[boldOrNo] = obj.startTime;
   timeField.short = true;
   fields.push(timeField);
   attachment.color = '';
