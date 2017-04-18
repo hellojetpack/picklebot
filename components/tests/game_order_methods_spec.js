@@ -1,5 +1,5 @@
 const test = require('tape');
-const listMethods = require('./game_order_methods');
+const listMethods = require('../game_order_methods');
 
 test('Skipping game order', (assert) => {
   {
