@@ -1,38 +1,37 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var querystring = require('querystring');
-var debug = require('debug')('botkit:webserver');
+const express = require('express');
+const bodyParser = require('body-parser');
+const debug = require('debug')('botkit:webserver');
+const fs = require('fs');
+const path = require('path');
 
-module.exports = function(controller) {
+module.exports = (controller) => {
+  const webserver = express();
+  webserver.use(bodyParser.json());
+  webserver.use(bodyParser.urlencoded({ extended: true }));
 
+  // import express middlewares that are present in /components/express_middleware
+  const normalizedPath = path.join(__dirname, 'express_middleware');
+  fs.readdirSync(normalizedPath).forEach((file) => {
+    /* eslint-disable global-require */
+    require(`./express_middleware/${file}`)(webserver, controller);
+    /* eslint-enable global-require */
+  });
 
-    var webserver = express();
-    webserver.use(bodyParser.json());
-    webserver.use(bodyParser.urlencoded({ extended: true }));
+  webserver.use(express.static('public'));
 
-    // import express middlewares that are present in /components/express_middleware
-    var normalizedPath = require("path").join(__dirname, "express_middleware");
-    require("fs").readdirSync(normalizedPath).forEach(function(file) {
-        require("./express_middleware/" + file)(webserver, controller);
-    });
+  webserver.listen(process.env.PORT || 3000, null, () => {
+    debug(`Express webserver configured and listening at http://localhost:${process.env.PORT}` || 3000);
+  });
 
-    webserver.use(express.static('public'));
+  // import all the pre-defined routes that are present in /components/routes
+  const normalizedPathR = path.join(__dirname, 'routes');
+  fs.readdirSync(normalizedPathR).forEach((file) => {
+    /* eslint-disable global-require */
+    require(`./routes/${file}`)(webserver, controller);
+    /* eslint-enable global-require */
+  });
 
+  controller.webserver = webserver;
 
-    webserver.listen(process.env.PORT || 3000, null, function() {
-
-        debug('Express webserver configured and listening at http://localhost:' + process.env.PORT || 3000);
-
-    });
-
-    // import all the pre-defined routes that are present in /components/routes
-    var normalizedPath = require("path").join(__dirname, "routes");
-    require("fs").readdirSync(normalizedPath).forEach(function(file) {
-      require("./routes/" + file)(webserver, controller);
-    });
-
-    controller.webserver = webserver;
-
-    return webserver;
-
-}
+  return webserver;
+};
