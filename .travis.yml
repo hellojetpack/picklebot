@@ -3,3 +3,4 @@ node_js:
   - "stable"
 notifications:
   slack: hellojetpackteam:6IMdivZiP6Xdi8ByxS35BmH8
+before_script: npm start
