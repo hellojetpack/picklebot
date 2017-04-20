@@ -13,4 +13,8 @@ const gameSkip = (arr, userId) => {
   return gameOrder;
 };
 
-module.exports = { gameSkip };
+const gameRemove = (arr, userId) =>
+  arr.reduce((newGameOrder, currentElement) =>
+    (currentElement.createdBy === userId ? newGameOrder : newGameOrder.concat(currentElement)), []);
+
+module.exports = { gameSkip, gameRemove };
