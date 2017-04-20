@@ -1,12 +1,12 @@
 const test = require('tape');
 
-const messageFormat = require('./message_formating.js');
+const messageFormat = require('../message_formating.js');
 
 // test suite
 test('format attachment', (assert) => {
   {
     const msg = 'formatAttachment() should take an object and format it into a slack attachment. Scheduled time is false should return value for time key';
-    const gameSlot = { createdBy: 'john', gameTime: '10am', scheduled: false };
+    const gameSlot = { createdBy: 'john', startTime: '10am', scheduled: false };
 
     const actual = messageFormat.formatAttachment(gameSlot);
     const expected = { color: '', fields: [{ value: 'john', short: true }, { value: '10am', short: true }] };
@@ -16,7 +16,7 @@ test('format attachment', (assert) => {
 
   {
     const msg = 'formatAttachment() should take an object and format it into a slack attachment. Scheduled time is true should return "title" for time key';
-    const gameSlotSchedTime = { createdBy: 'john', gameTime: '10am', scheduled: true };
+    const gameSlotSchedTime = { createdBy: 'john', startTime: '10am', scheduled: true };
 
     const actual = messageFormat.formatAttachment(gameSlotSchedTime);
     const expected = { color: '', fields: [{ value: 'john', short: true }, { title: '10am', short: true }] };
@@ -30,9 +30,9 @@ test('format message', (assert) => {
   {
     const msg = 'formatMessage() should take the game array and format it into a slack message';
     const arr = [
-      { createdBy: 'john', gameTime: '10am', scheduled: false },
-      { createdBy: 'matt', gameTime: '11am', scheduled: false },
-      { createdBy: 'jeff', gameTime: '11:30am', scheduled: false },
+      { createdBy: 'john', startTime: '10am', scheduled: false },
+      { createdBy: 'matt', startTime: '11am', scheduled: false },
+      { createdBy: 'jeff', startTime: '11:30am', scheduled: false },
     ];
 
     const actual = messageFormat.formatMessage(arr);
