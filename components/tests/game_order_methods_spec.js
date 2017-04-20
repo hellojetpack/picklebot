@@ -24,3 +24,14 @@ test('Skipping game order', (assert) => {
   }
   assert.end();
 });
+test('Removing game from order', (assert) => {
+  {
+    const msg = 'should remove user/player game from list';
+    const gameOrder = [{ createdBy: '12343' }, { createdBy: '123' }, { createdBy: '1234' }];
+    const userId = '123';
+    const expected = [{ createdBy: '12343' }, { createdBy: '1234' }];
+    const actual = listMethods.gameRemove(gameOrder, userId);
+    assert.same(actual, expected, msg);
+  }
+  assert.end();
+});
