@@ -1,6 +1,6 @@
 const test = require('tape');
 
-const messageFormat = require('../message_formating.js');
+const messageFormat = require('./message_formating.js');
 
 // test suite
 test('format attachment', (assert) => {
