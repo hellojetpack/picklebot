@@ -1,5 +1,5 @@
 const test = require('tape');
-const reactions = require('../reactions');
+const reactions = require('./reactions');
 
 test('reactions', (assert) => {
   {
