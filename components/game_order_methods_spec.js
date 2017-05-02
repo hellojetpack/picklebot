@@ -1,5 +1,5 @@
 const test = require('tape');
-const listMethods = require('../game_order_methods');
+const listMethods = require('./game_order_methods');
 
 test('Skipping game order', (assert) => {
   {
@@ -31,6 +31,7 @@ test('Removing game from order', (assert) => {
     const userId = '123';
     const expected = [{ createdBy: '12343' }, { createdBy: '1234' }];
     const actual = listMethods.gameRemove(gameOrder, userId);
+
     assert.same(actual, expected, msg);
   }
   assert.end();
