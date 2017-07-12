@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node bot.js",
     "test": "tape -r babel-register components/**/*_spec.js | tap-spec",
-    "startDev": "nodemon bot.js",
+    "startDev": "nodemon -L bot.js --exec babel-node",
     "lt": "node components/localtunnel.js",
     "develop": "npm run lt & npm run startDev"
   },

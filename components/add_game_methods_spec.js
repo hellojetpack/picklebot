@@ -1,6 +1,6 @@
 import test from 'tape';
 import moment from 'moment';
-import { addScheduledGame, addSimpleGame, gameTimeConflicts, convertTo24 } from './addGameMethods';
+import { addScheduledGame, addSimpleGame, gameTimeConflicts, convertTo24 } from './add_game_methods';
 
 
 test('adding a scheduled game', (assert) => {
@@ -99,16 +99,16 @@ test('Adding an unschedule game.', (assert) => {
     const msg = 'Should take the game order and insert a game slot at the next availble time.';
     const gameOrder = [
       { createdBy: 'john', startTime: '10:00', scheduled: false },
-      { createdBy: 'matt', startTime: '11:00', scheduled: false },
+      { createdBy: 'matt', startTime: '10:50', scheduled: false },
       { createdBy: 'jeff', startTime: '13:30', scheduled: true },
     ];
     const userId = '123asd';
 
-    const actual = addSimpleGame(gameOrder, userId);
+    const actual = addSimpleGame(gameOrder, userId, 1493481822);
     const expected = [
       { createdBy: 'john', startTime: '10:00', scheduled: false },
-      { createdBy: '123asd', startTime: '10:30', scheduled: false },
-      { createdBy: 'matt', startTime: '11:00', scheduled: false },
+      { createdBy: 'matt', startTime: '10:50', scheduled: false },
+      { createdBy: '123asd', startTime: '11:20', scheduled: false },
       { createdBy: 'jeff', startTime: '13:30', scheduled: true },
     ];
 
@@ -122,7 +122,7 @@ test('Adding an unschedule game.', (assert) => {
       { createdBy: 'john', startTime: '10:00', scheduled: false },
     ];
 
-    const actual = addSimpleGame(gameOrder, UserId);
+    const actual = addSimpleGame(gameOrder, UserId, 1493481822);
     const expected = [
       { createdBy: 'john', startTime: '10:00', scheduled: false },
       { createdBy: '123asd', startTime: '10:30', scheduled: false },
@@ -135,9 +135,24 @@ test('Adding an unschedule game.', (assert) => {
     const msg = 'Should take the gameOrder and insert a new game slot if the game order is empty';
     const userId = '123asd';
     const gameOrder = [];
+    const msgTimestamp = 1493481822; // The format that slacks send it
 
-    const actual = addSimpleGame(gameOrder, userId);
-    const expected = [{ createdBy: '123asd', startTime: `${moment().add(5, 'minutes').format('H:mm')}`, scheduled: false }];
+    const actual = addSimpleGame(gameOrder, userId, msgTimestamp);
+    const expected = [{ createdBy: '123asd', startTime: moment(String(msgTimestamp), 'X').format('H:mm'), scheduled: false }];
+
+    assert.same(actual, expected, msg);
+  }
+
+  {
+    const msg = 'Should take the gameOrder and insert the game slot in front';
+    const userId = '123asd';
+    const msgTimestamp = 1493481822;
+    const gameOrder = [
+      { createdBy: 'john', startTime: '11:00', scheduled: false },
+    ];
+
+    const actual = addSimpleGame(gameOrder, userId, 1493481822);
+    const expected = [{ createdBy: '123asd', startTime: moment(String(msgTimestamp), 'X').format('H:mm'), scheduled: false }, ...gameOrder];
 
     assert.same(actual, expected, msg);
   }
