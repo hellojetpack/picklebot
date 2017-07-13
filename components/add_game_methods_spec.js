@@ -104,7 +104,7 @@ test('Adding an unschedule game.', (assert) => {
     ];
     const userId = '123asd';
 
-    const actual = addSimpleGame(gameOrder, userId, 1493481822);
+    const actual = addSimpleGame(gameOrder, userId, '1493481822');
     const expected = [
       { createdBy: 'john', startTime: '10:00', scheduled: false },
       { createdBy: 'matt', startTime: '10:50', scheduled: false },
@@ -122,7 +122,7 @@ test('Adding an unschedule game.', (assert) => {
       { createdBy: 'john', startTime: '10:00', scheduled: false },
     ];
 
-    const actual = addSimpleGame(gameOrder, UserId, 1493481822);
+    const actual = addSimpleGame(gameOrder, UserId, '1493481822');
     const expected = [
       { createdBy: 'john', startTime: '10:00', scheduled: false },
       { createdBy: '123asd', startTime: '10:30', scheduled: false },
@@ -135,7 +135,7 @@ test('Adding an unschedule game.', (assert) => {
     const msg = 'Should take the gameOrder and insert a new game slot if the game order is empty';
     const userId = '123asd';
     const gameOrder = [];
-    const msgTimestamp = 1493481822; // The format that slacks send it
+    const msgTimestamp = '1493481822'; // The format that slacks send it
 
     const actual = addSimpleGame(gameOrder, userId, msgTimestamp);
     const expected = [{ createdBy: '123asd', startTime: moment(String(msgTimestamp), 'X').format('H:mm'), scheduled: false }];
@@ -146,12 +146,12 @@ test('Adding an unschedule game.', (assert) => {
   {
     const msg = 'Should take the gameOrder and insert the game slot in front';
     const userId = '123asd';
-    const msgTimestamp = 1493481822;
+    const msgTimestamp = '1493481822';
     const gameOrder = [
       { createdBy: 'john', startTime: '11:00', scheduled: false },
     ];
 
-    const actual = addSimpleGame(gameOrder, userId, 1493481822);
+    const actual = addSimpleGame(gameOrder, userId, '1493481822');
     const expected = [{ createdBy: '123asd', startTime: moment(String(msgTimestamp), 'X').format('H:mm'), scheduled: false }, ...gameOrder];
 
     assert.same(actual, expected, msg);
