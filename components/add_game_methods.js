@@ -9,6 +9,18 @@ const check60MinPad = checkPadding(60);
 const timeForm = time => moment(time, 'H:mm');
 const timeFormX = time => moment(String(time), 'X');
 
+const gameOrderJSTimeToMoment = gameOrder => gameOrder.map(
+  (slot) => {
+    slot.startTime = moment.utc(slot.startTime);
+    return slot;
+  });
+
+const gameOrderMomentToJSTime = gameOrder => gameOrder.map(
+  (slot) => {
+    slot.startTime = slot.startTime.toDate();
+    return slot;
+  });
+
 const sortByStartTime = (...gameOrder) => gameOrder.sort((a, b) => a.startTime > b.startTime);
 
 const find60MinWindow = gameOrder => gameOrder.find(
@@ -30,8 +42,12 @@ const findNextAvailableTime = (gameOrder, msgTimestamp) => {
     now : findNextInFilledList(gameOrder);
 };
 
-export const addScheduledGame = (gameOrder, userId, time) =>
-  sortByStartTime(...gameOrder, createGameSlot(userId, time, true));
+export const addScheduledGame = (gameOrder, userId, time) => gameOrderMomentToJSTime(
+  sortByStartTime(
+    ...gameOrderJSTimeToMoment(gameOrder),
+    createGameSlot(userId, time, true),
+  ),
+);
 
 export const addSimpleGame = (gameOrder, userId, time) =>
   sortByStartTime(...gameOrder, createGameSlot(userId,
