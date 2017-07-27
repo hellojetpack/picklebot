@@ -17,16 +17,16 @@ const createColor = (startArr, endArr, t) => {
 
 // takes an array of attachments and adds a color to each attachment
 // starts with green and color interpolates to a dark blue
-const addColor = aArr => aArr.map((elem, index, arr) => {
+export const addColor = aArr => aArr.map((elem, index, arr) => {
   const value = index / (arr.length - 1);
   const color = { color: createColor([11, 225, 162], [11, 57, 225], value).toUpperCase() };
   return Object.assign({}, elem, color);
 });
 
 // takes a game order game slot and converts it into a slack attachment with two fields
-const formatAttachment = (obj) => {
+export const formatAttachment = (obj) => {
   const attachment = {};
-  const fields = [{ value: obj.createdBy, short: true }];
+  const fields = [{ value: `<@${obj.createdBy}>`, short: true }];
   const timeField = {};
   const boldOrNo = obj.scheduled ? 'title' : 'value'; // bold scheduled times
   timeField[boldOrNo] = obj.startTime;
@@ -37,7 +37,7 @@ const formatAttachment = (obj) => {
   return attachment;
 };
 
-const formatMessage = (arr) => {
+export const formatMessage = (arr) => {
   const gameOrderMessage = {};
 
   let attachments = arr.reduce((acc, curr) => acc.concat(formatAttachment(curr)), []);
@@ -56,5 +56,3 @@ const formatMessage = (arr) => {
 
   return gameOrderMessage;
 };
-
-module.exports = { formatAttachment, formatMessage, addColor };
